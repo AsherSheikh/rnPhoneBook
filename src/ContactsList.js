@@ -9,7 +9,7 @@ const ContactsList = ({ findContact, refetchContact }) => {
         return item?.recordID?.toString() || idx.toString();
     };
     const renderItem = ({ item, index }) => {
-        return <Contact contact={item} />;
+        return <Contact contact={item} refetchContact={() => fetchContacts()} />;
     };
 
     const filteredContacts = contacts.filter((contact) =>
@@ -18,13 +18,15 @@ const ContactsList = ({ findContact, refetchContact }) => {
         )
     );
 
-    useEffect(() => {
-        const fetchContacts = () => {
-            Contacts.getAll().then((contacts) => {
-                setContacts(contacts);
-                console.log('Fetched contacts:', contacts);
-            });
-        };
+    const fetchContacts = () => {
+        Contacts.getAll().then((contacts) => {
+            setContacts(contacts);
+            console.log('Fetched contacts:', contacts);
+        });
+    };
+
+    async function getContacts() {
+
 
         fetchContacts(); // Initial fetch
 
@@ -41,6 +43,10 @@ const ContactsList = ({ findContact, refetchContact }) => {
         return () => {
             subscription.remove();
         };
+    }
+
+    useEffect(() => {
+        getContacts()
     }, [refetchContact]);
 
     return (

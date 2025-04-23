@@ -1,9 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import Contacts from 'react-native-contacts';
 
-const Contact = ({ contact }) => {
+
+const Contact = ({ contact, refetchContact }) => {
     const handlePress = async (contact) => {
+        console.log('contact: ', contact)
     }
 
     const getColorForName = (name) => {
@@ -34,6 +38,14 @@ const Contact = ({ contact }) => {
     };
 
 
+    const handleDelete = async (contact) => {
+        Contacts.deleteContact(contact).then((recordId) => {
+            console.log('deleted contact:', recordId)
+            refetchContact()
+        })
+    }
+
+
     return (
         <TouchableOpacity onPress={() => handlePress(contact)} style={styles.contactCon}>
             <View style={{ ...styles.imgCon, backgroundColor: getColorForName(contact?.givenName || 'Unknown') }}>
@@ -48,6 +60,9 @@ const Contact = ({ contact }) => {
                     {contact?.phoneNumbers[0]?.number}
                 </Text>
             </View>
+            <TouchableOpacity onPress={() => handleDelete(contact)} style={{ ...styles.dialCon, backgroundColor: '#E33636', marginHorizontal: 5 }}>
+                <MaterialIcons size={20} color={'#fff'} name={'person-remove-alt-1'} />
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => dialNumber(contact?.phoneNumbers[0]?.number)} style={styles.dialCon}>
                 <Ionicons size={20} color={'#fff'} name={'call'} />
             </TouchableOpacity>
